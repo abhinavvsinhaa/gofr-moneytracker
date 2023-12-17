@@ -10,11 +10,11 @@ type User struct {
 }
 
 type Record struct {
-	Id          int     `json:"id"`
-	Email       string  `json:"email"`
-	Date        string  `json:"date"`
-	Amount      float32 `json:"amount"`
-	Description string  `json:"description"`
+	Id          int    `json:"id"`
+	Email       string `json:"email"`
+	Date        string `json:"date"`
+	Amount      string `json:"amount"`
+	Description string `json:"description"`
 }
 
 func main() {
@@ -30,7 +30,7 @@ func main() {
 	// POST user
 	app.POST("/user", func(ctx *gofr.Context) (interface{}, error) {
 		var user User
-		err := ctx.Bind(user)
+		err := ctx.Bind(&user)
 
 		if err != nil {
 			return nil, err
@@ -78,7 +78,7 @@ func main() {
 		}
 
 		var body RequestBody
-		err := ctx.Bind(body)
+		err := ctx.Bind(&body)
 
 		if err != nil {
 			return nil, err
@@ -95,7 +95,7 @@ func main() {
 		for rows.Next() {
 			var record Record
 
-			if err := rows.Scan(&record.Amount, &record.Date, &record.Description); err != nil {
+			if err := rows.Scan(&record.Id, &record.Email, &record.Date, &record.Amount, &record.Description); err != nil {
 				return nil, err
 			}
 
@@ -104,6 +104,52 @@ func main() {
 
 		return records, nil
 
+	})
+
+	app.POST("/record", func(ctx *gofr.Context) (interface{}, error) {
+		type RequestBody struct {
+			Email       string `json:"email"`
+			Date        string `json:"date"`
+			Amount      string `json:"amount"`
+			Description string `json:"description"`
+		}
+
+		var body RequestBody
+		err := ctx.Bind(&body)
+
+		if err != nil {
+			return nil, err
+		}
+
+		// check if user exists, with given email address
+		rows, err := ctx.DB().QueryContext(ctx, "SELECT * FROM user WHERE email=?", body.Email)
+
+		if err != nil {
+			return nil, err
+		}
+
+		count := 0
+		for rows.Next() {
+			count++
+			break
+		}
+
+		// user exists
+		if count != 0 {
+			// insert into records table
+			_, err := ctx.DB().ExecContext(ctx, "INSERT INTO record (email, date, amount, description) VALUES (?, ?, ?, ?)", body.Email, body.Date, body.Amount, body.Description)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return "Record successfully added", nil
+		} else {
+			return nil, &errors.Response{
+				StatusCode: 400,
+				Reason:     "User does not exists",
+			}
+		}
 	})
 
 	// Starts the server, it will listen on the default port 8000.
