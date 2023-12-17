@@ -2,6 +2,17 @@ package main
 
 import "gofr.dev/pkg/gofr"
 
+type User struct {
+	Email string `json:"email"`
+}
+
+type Records struct {
+	Email       string  `json:"email"`
+	Date        string  `json:"date"`
+	Amount      float32 `json:"amount"`
+	Description string  `json:"description"`
+}
+
 func main() {
 	// initialise gofr object
 	app := gofr.New()
