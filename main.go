@@ -9,7 +9,8 @@ type User struct {
 	Email string `json:"email"`
 }
 
-type Records struct {
+type Record struct {
+	Id          int     `json:"id"`
 	Email       string  `json:"email"`
 	Date        string  `json:"date"`
 	Amount      float32 `json:"amount"`
@@ -68,6 +69,41 @@ func main() {
 			return "User added successfully", nil
 
 		}
+	})
+
+	// GET record
+	app.GET("/record", func(ctx *gofr.Context) (interface{}, error) {
+		type RequestBody struct {
+			Email string `json:"email"`
+		}
+
+		var body RequestBody
+		err := ctx.Bind(body)
+
+		if err != nil {
+			return nil, err
+		}
+
+		rows, err := ctx.DB().QueryContext(ctx, "SELECT * FROM record WHERE email=?", body.Email)
+
+		if err != nil {
+			return nil, err
+		}
+
+		var records []Record
+
+		for rows.Next() {
+			var record Record
+
+			if err := rows.Scan(&record.Amount, &record.Date, &record.Description); err != nil {
+				return nil, err
+			}
+
+			records = append(records, record)
+		}
+
+		return records, nil
+
 	})
 
 	// Starts the server, it will listen on the default port 8000.
