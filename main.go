@@ -152,6 +152,44 @@ func main() {
 		}
 	})
 
+	app.PATCH("/record/{id}", func(ctx *gofr.Context) (interface{}, error) {
+		id := ctx.PathParam("id")
+
+		type RequestBody struct {
+			Email       string `json:"email"`
+			Date        string `json:"date"`
+			Amount      string `json:"amount"`
+			Description string `json:"description"`
+		}
+
+		var body RequestBody
+		err := ctx.Bind(&body)
+
+		if err != nil {
+			return nil, err
+		}
+
+		_, err = ctx.DB().ExecContext(ctx, "UPDATE record SET email=?, date=?, amount=?, description=? WHERE id=?", body.Email, body.Date, body.Amount, body.Description, id)
+
+		if err != nil {
+			return nil, err
+		}
+
+		return "Data updated success", nil
+	})
+
+	app.DELETE("/record/{id}", func(ctx *gofr.Context) (interface{}, error) {
+		id := ctx.PathParam("id")
+
+		_, err := ctx.DB().ExecContext(ctx, "DELETE FROM record WHERE id=?", id)
+
+		if err != nil {
+			return nil, err
+		}
+
+		return "Deleted successfully", nil
+	})
+
 	// Starts the server, it will listen on the default port 8000.
 	// it can be over-ridden through configs
 	app.Start()
