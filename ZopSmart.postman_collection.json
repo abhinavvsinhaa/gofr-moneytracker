@@ -1,0 +1,105 @@
+{
+	"info": {
+		"_postman_id": "f7f969d5-a5ab-4f51-845d-a2d622450375",
+		"name": "ZopSmart",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "14034300",
+		"_collection_link": "https://www.postman.com/solar-station-253785/workspace/zopsmart-gofr/collection/14034300-f7f969d5-a5ab-4f51-845d-a2d622450375?action=share&source=collection_link&creator=14034300"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Add new user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"sample@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/user"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Records",
+			"item": [
+				{
+					"name": "Get records with email address",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"sample@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/record/"
+					},
+					"response": []
+				},
+				{
+					"name": "Add new record",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\" : \"sample@gmail.com\",\n    \"amount\": \"2344.24\",\n    \"date\": \"2023-12-18 01:12AM\",\n    \"description\": \"cheesecake\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/record/"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete record by id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8080/record/1"
+					},
+					"response": []
+				},
+				{
+					"name": "Update record",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\" : \"sample@gmail.com\",\n    \"amount\": \"2344.24\",\n    \"date\": \"2023-12-18 01:12AM\",\n    \"description\": \"decoration\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/record/1"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
